@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test WebSocket</title>
+</head>
+<body>
+    <h1>Test WebSocket</h1>
+    <div>
+        <input type="text" id="nombre" placeholder="Nombre">
+        <button id="registrar">Registrar</button>
+    </div>
+    <div>
+        <input type="text" id="mensaje" placeholder="Mensaje">
+        <button id="enviar">Enviar</button>
+    </div>
+    <div id="log" style="height: 300px; overflow: auto; border: 1px solid black; margin-top: 10px; padding: 10px;"></div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:8080');
+        let registrado = false;
+        
+        function addLog(msg) {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        }
+        
+        ws.onopen = () => {
+            addLog('✅ Conectado al servidor');
+        };
+        
+        ws.onmessage = (event) => {
+            addLog(`📨 Recibido: ${event.data}`);
+            const data = JSON.parse(event.data);
+            if (data.tipo === 'sistema' && data.mensaje.includes('Bienvenid')) {
+                registrado = true;
+                addLog('✅ Registrado exitosamente!');
+            }
+        };
+        
+        ws.onclose = (event) => {
+            addLog(`🔌 Desconectado - Código: ${event.code} - Razón: ${event.reason}`);
+            registrado = false;
+        };
+        
+        ws.onerror = (error) => {
+            addLog(`❌ Error: ${error.message}`);
+        };
+        
+        document.getElementById('registrar').onclick = () => {
+            const nombre = document.getElementById('nombre').value;
+            if (nombre) {
+                addLog(`📤 Enviando registro: ${nombre}`);
+                ws.send(JSON.stringify({
+                    tipo: 'registro',
+                    nombre: nombre,
+                    tipo_cliente: 'web'
+                }));
+            }
+        };
+        
+        document.getElementById('enviar').onclick = () => {
+            if (!registrado) {
+                addLog('⚠️ No registrado aún');
+                return;
+            }
+            const mensaje = document.getElementById('mensaje').value;
+            if (mensaje) {
+                addLog(`📤 Enviando mensaje: ${mensaje}`);
+                ws.send(JSON.stringify({
+                    tipo: 'mensaje',
+                    texto: mensaje
+                }));
+                document.getElementById('mensaje').value = '';
+            }
+        };
+    </script>
+</body>
+</html>

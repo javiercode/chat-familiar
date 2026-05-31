@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  chat-server:
+    build: .
+    container_name: chat-familiar
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persistir la base de datos
+      - ./data:/app/data
+      # Opcional: montar archivos de configuración para desarrollo
+      - ./server.js:/app/server.js:ro
+      - ./database.js:/app/database.js:ro
+    environment:
+      - NODE_ENV=production
+      - DB_PATH=/app/data/chat.db
+      - PORT=8080
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:8080/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - chat-network
+
+networks:
+  chat-network:
+    driver: bridge
