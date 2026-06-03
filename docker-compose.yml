@@ -6,13 +6,14 @@ services:
     container_name: chat-familiar
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8123:8080"
     volumes:
       # Persistir la base de datos
       - ./data:/app/data
       # Opcional: montar archivos de configuración para desarrollo
       - ./server.js:/app/server.js:ro
       - ./database.js:/app/database.js:ro
+      - ./ssl:/app/ssl:ro
     environment:
       - NODE_ENV=production
       - DB_PATH=/app/data/chat.db

@@ -14,6 +14,7 @@ RUN npm install --only=production
 
 # Copiar código fuente
 COPY server.js database.js init-db.sql ./
+COPY ssl/ ./ssl/
 
 # Crear directorio para la base de datos
 RUN mkdir -p /app/data && chown -R node:node /app/data

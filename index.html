@@ -907,8 +907,27 @@
 
     <script>
         // Configuración - CAMBIA ESTO por la IP de tu VPS
-        const VPS_IP = '72.61.50.227';
-        const WS_PORT = 8123;
+        // const VPS_IP = '72.61.50.227';
+        let VPS_IP;
+        let WS_PORT = 8123;
+        let WS_PROTOCOL;
+
+        // Detectar si estamos en local o en producción
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' ||
+                        window.location.hostname === '';
+
+        if (isLocal) {
+            // Configuración para pruebas LOCALES
+            VPS_IP = 'localhost';
+            WS_PROTOCOL = 'wss';  // o 'ws' si no usas SSL local
+            console.log('🔧 Modo LOCAL detectado');
+        } else {
+            // Configuración para PRODUCCIÓN (VPS / GitHub Pages)
+            VPS_IP = '72.61.50.227';
+            WS_PROTOCOL = 'wss';
+            console.log('🚀 Modo PRODUCCIÓN detectado');
+        }
         
         // Estado global
         let ws = null;
@@ -1002,8 +1021,7 @@
         }
         
         function connect() {
-            const wsUrl = `ws://${VPS_IP}:${WS_PORT}`;
-            // const wsUrl = `wss://${VPS_IP}/ws`;
+            const wsUrl = `${WS_PROTOCOL}://${VPS_IP}:${WS_PORT}`;
             console.log('Conectando a:', wsUrl);
             ws = new WebSocket(wsUrl);
             
