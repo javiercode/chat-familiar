@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>💬 Chat Familiar</title>
     <style>
         * {
@@ -10,234 +10,275 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        
-        .chat-container {
-            width: 95%;
-            max-width: 1200px;
-            height: 90vh;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
-            display: flex;
             overflow: hidden;
             position: relative;
         }
-        
-        /* Modal de registro */
-        .register-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .register-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            animation: fadeInUp 0.3s ease;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .register-card h2 {
-            color: #2d3748;
-            margin-bottom: 20px;
-            font-size: 1.8em;
-        }
-        
-        .register-card p {
-            color: #718096;
-            margin-bottom: 20px;
-        }
-        
-        .register-card input {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.2em;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        
-        .register-card input:focus {
-            border-color: #667eea;
-        }
-        
-        .register-card button {
-            width: 100%;
-            padding: 15px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .register-card button:hover {
-            background: #5a67d8;
-        }
-        
-        .register-card button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .sidebar {
-            width: 250px;
-            background: #2d3748;
-            color: white;
+
+        /* Contenedor principal */
+        .app-container {
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            position: relative;
         }
-        
-        .sidebar-header {
-            padding: 20px;
-            background: #1a202c;
-            border-bottom: 1px solid #4a5568;
-        }
-        
-        .sidebar-header h3 {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: #4a5568;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        
-        .user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-        }
-        
-        .user-name {
-            flex: 1;
-            font-size: 0.9em;
-        }
-        
-        .users-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-        }
-        
-        .user-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            margin-bottom: 8px;
-            background: #4a5568;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .user-item:hover {
-            background: #5a6578;
-        }
-        
-        .user-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #48bb78;
-            margin-left: auto;
-        }
-        
-        .main-chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #f7fafc;
-        }
-        
-        .chat-header {
-            background: white;
-            padding: 20px;
-            border-bottom: 1px solid #e2e8f0;
+
+        /* Header principal */
+        .main-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 10;
         }
-        
-        .chat-title {
-            font-size: 1.2em;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 18px;
             font-weight: bold;
             color: #2d3748;
         }
-        
-        .connection-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
+
+        .menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
         }
-        
+
+        .menu-button:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .connection-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .connected {
             background: #48bb78;
             color: white;
         }
-        
+
+        .connected .status-dot {
+            background: white;
+        }
+
         .connecting {
             background: #ed8936;
             color: white;
         }
-        
+
+        .connecting .status-dot {
+            background: white;
+        }
+
         .disconnected {
             background: #f56565;
             color: white;
         }
-        
-        .chat-messages {
+
+        /* Layout principal */
+        .chat-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Sidebar (escritorio) */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 20;
+        }
+
+        .user-profile {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 12px;
+            border: 3px solid white;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .user-status-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .users-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #718096;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .user-item:hover {
+            background: #edf2f7;
+            transform: translateX(4px);
+        }
+
+        .user-item-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+        }
+
+        .user-item-info {
+            flex: 1;
+        }
+
+        .user-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .user-item-device {
+            font-size: 10px;
+            color: #718096;
+        }
+
+        .user-status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+        }
+
+        /* Área principal de chat */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f7fafc;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .chat-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .chat-info p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        /* Mensajes */
+        .messages-container {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
@@ -245,13 +286,13 @@
             flex-direction: column;
             gap: 12px;
         }
-        
+
         .message {
             display: flex;
-            animation: slideIn 0.2s ease;
+            animation: fadeInUp 0.2s ease;
         }
-        
-        @keyframes slideIn {
+
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -261,420 +302,673 @@
                 transform: translateY(0);
             }
         }
-        
+
         .message.sent {
             justify-content: flex-end;
         }
-        
+
         .message.received {
             justify-content: flex-start;
         }
-        
+
         .message.system {
             justify-content: center;
         }
-        
+
         .message-bubble {
             max-width: 70%;
-            padding: 10px 15px;
+            padding: 10px 16px;
             border-radius: 18px;
             position: relative;
             word-wrap: break-word;
         }
-        
+
         .message.sent .message-bubble {
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border-bottom-right-radius: 4px;
         }
-        
+
         .message.received .message-bubble {
             background: white;
             border: 1px solid #e2e8f0;
             color: #2d3748;
             border-bottom-left-radius: 4px;
         }
-        
+
         .message.system .message-bubble {
             background: #edf2f7;
             color: #4a5568;
-            font-size: 0.85em;
+            font-size: 12px;
             font-style: italic;
             max-width: 90%;
         }
-        
+
         .message-name {
-            font-size: 0.75em;
+            font-size: 11px;
             margin-bottom: 4px;
-            font-weight: bold;
+            font-weight: 600;
         }
-        
+
         .message-time {
-            font-size: 0.65em;
+            font-size: 10px;
             margin-top: 4px;
             opacity: 0.7;
         }
-        
-        .chat-input-area {
-            padding: 20px;
+
+        /* Input area */
+        .input-area {
             background: white;
             border-top: 1px solid #e2e8f0;
+            padding: 16px 20px;
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
-        
-        .chat-input-area input {
-            flex: 1;
-            padding: 12px;
+
+        .emoji-btn {
+            background: #f7fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 25px;
-            font-size: 1em;
-            outline: none;
-            transition: border-color 0.2s;
+            border-radius: 30px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+            position: relative;
         }
-        
-        .chat-input-area input:focus {
-            border-color: #667eea;
+
+        .emoji-btn:hover {
+            background: #edf2f7;
+            transform: scale(1.05);
         }
-        
-        .chat-input-area button {
-            padding: 12px 24px;
+
+        .emoji-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
             background: #667eea;
             color: white;
+            font-size: 10px;
+            border-radius: 10px;
+            padding: 2px 6px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 30px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
-            border-radius: 25px;
+            border-radius: 30px;
+            padding: 12px 24px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
-        
-        .chat-input-area button:hover:not(:disabled) {
-            background: #5a67d8;
+
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
-        
-        .chat-input-area button:disabled {
+
+        .send-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
+
+        .emoji-panel {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+            max-height: 50vh; /* Altura controlada */
+            overflow-y: auto; /* Scroll vertical si hay muchos */
+            overflow-x: hidden; /* Evita scroll horizontal */
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        .emoji-panel * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .emoji-category {
+            padding: 10px 5px;
+            width: 100%;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .emoji-category:last-child {
+            border-bottom: none;
+        }
+
+        .emoji-category-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #718096;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .emoji-grid {
+            display: block; /* Cambiado de flex a block */
+            width: 100%;
+            line-height: 1.8; /* Espaciado entre líneas como un párrafo */
+            text-align: left;
+        }
+
+        .emoji-grid button {
+            background: none; /* Quitamos el fondo de caja */
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            margin: 2px;
+            display: inline-block; /* Se comportan como palabras */
+            vertical-align: middle;
+            transition: transform 0.1s;
+            border-radius: 8px;
+        }
+
+        .emoji-grid button:hover {
+            background: #edf2f7;
+            transform: scale(1.2);
+        }
+
+        /* Modal de registro */
+        .register-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .register-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-            
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-card h2 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 28px;
+        }
+
+        .register-card p {
+            color: #718096;
+            margin-bottom: 24px;
+        }
+
+        .register-card input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .register-card input:focus {
+            border-color: #667eea;
+        }
+
+        .register-card button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .register-card button:hover {
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #f56565;
+            font-size: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        /* Overlay móvil para sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 15;
+        }
+
+        /* Scrollbar personalizada */
+        .messages-container::-webkit-scrollbar,
+        .users-section::-webkit-scrollbar,
+        .emoji-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .messages-container::-webkit-scrollbar-track,
+        .users-section::-webkit-scrollbar-track,
+        .emoji-panel::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 5px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb,
+        .users-section::-webkit-scrollbar-thumb,
+        .emoji-panel::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu-button {
+                display: block;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                z-index: 16;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay {
+                display: block;
+            }
+
+            .sidebar-overlay.open {
+                display: block;
+            }
+
+            .back-button {
+                display: block;
+            }
+
             .message-bubble {
                 max-width: 85%;
             }
-            
-            .chat-input-area button {
-                padding: 12px 18px;
+
+            .register-card {
+                padding: 30px 20px;
+            }
+
+            .emoji-panel {
+                width: 95%;
+                max-width: 400px;
             }
         }
-        
-        .emoji-btn {
-            background: #edf2f7;
-            border: none;
-            border-radius: 25px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-        
-        .emoji-panel {
-            position: absolute;
-            bottom: 80px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-        }
-        
-        .emoji-panel button {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            padding: 5px;
-            transition: transform 0.1s;
-        }
-        
-        .emoji-panel button:hover {
-            transform: scale(1.2);
-        }
-        
-        .error-message {
-            color: #f56565;
-            font-size: 0.85em;
-            margin-top: 10px;
-            display: none;
-        }
-        
-        .status-message {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #2d3748;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 10000;
+
+        @media (max-width: 480px) {
+            .main-header {
+                padding: 10px 16px;
+            }
+
+            .logo-text {
+                font-size: 16px;
+            }
+
+            .connection-status {
+                padding: 4px 10px;
+                font-size: 10px;
+            }
+
+            .input-area {
+                padding: 12px 16px;
+                gap: 8px;
+            }
+
+            .emoji-btn {
+                padding: 8px 12px;
+                font-size: 18px;
+            }
+
+            .message-input {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .send-btn {
+                padding: 10px 18px;
+                font-size: 13px;
+            }
+
+            .emoji-panel {
+                max-width: 380px;
+                max-height: 60vh;
+            }
+            
+            .emoji-grid button {
+                font-size: 24px;
+                width: 42px;
+                height: 42px;
+                padding: 6px;
+            }
+            
+            .emoji-category {
+                padding: 10px 12px;
+            }
+            
+            .emoji-category-title {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <!-- Modal de registro -->
-        <div class="register-modal" id="registerModal">
-            <div class="register-card">
-                <h2>💬 Chat Familiar</h2>
-                <p>¡Bienvenido! Ingresa tu nombre para comenzar</p>
-                <input type="text" id="nombreInput" placeholder="Tu nombre" autocomplete="off" maxlength="20">
-                <button id="registrarBtn">✨ Unirse al chat</button>
-                <div id="errorMsg" class="error-message"></div>
+    <div class="app-container">
+        <div class="main-header">
+            <div class="logo">
+                <div class="logo-icon">💬</div>
+                <div class="logo-text">Chat Familiar</div>
+            </div>
+            <button class="menu-button" id="menuButton">☰</button>
+            <div id="connectionStatus" class="connection-status connecting">
+                <span class="status-dot"></span>
+                <span>Conectando...</span>
             </div>
         </div>
-        
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h3>👥 Participantes</h3>
-                <div class="user-info" id="myUserInfo">
+
+        <div class="chat-layout">
+            <div class="sidebar" id="sidebar">
+                <div class="user-profile">
                     <div class="user-avatar" id="myAvatar">?</div>
                     <div class="user-name" id="myName">Sin conectar</div>
+                    <div class="user-status-text" id="myStatus">Esperando conexión</div>
                 </div>
-            </div>
-            <div class="users-list" id="usersList">
-                <div style="text-align: center; padding: 20px;">Esperando conexión...</div>
-            </div>
-        </div>
-        
-        <div class="main-chat">
-            <div class="chat-header">
-                <div class="chat-title">💬 Chat Familiar</div>
-                <div id="connectionStatus" class="connection-status connecting">🔄 Conectando...</div>
-            </div>
-            
-            <div id="messages" class="chat-messages">
-                <div class="message system">
-                    <div class="message-bubble">
-                        💡 Conectando al servidor...
+                <div class="users-section">
+                    <div class="section-title">👥 PARTICIPANTES ACTIVOS</div>
+                    <div class="users-list" id="usersList">
+                        <div class="loading">Cargando usuarios...</div>
                     </div>
                 </div>
             </div>
-            
-            <div class="chat-input-area">
-                <button class="emoji-btn" id="emojiBtn">😊</button>
-                <input type="text" id="messageInput" placeholder="Escribe tu mensaje..." disabled>
-                <button id="sendButton" disabled>📤 Enviar</button>
+
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+            <div class="chat-main">
+                <div class="chat-header">
+                    <button class="back-button" id="backButton">←</button>
+                    <div class="chat-info">
+                        <h4>💬 Conversación General</h4>
+                        <p>Todos los participantes</p>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message system">
+                        <div class="message-bubble">
+                            💡 Conectando al servidor...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <button class="emoji-btn" id="emojiBtn">
+                        😊
+                        <span class="emoji-badge">🎨</span>
+                    </button>
+                    <input type="text" class="message-input" id="messageInput" placeholder="Escribe tu mensaje..." disabled>
+                    <button class="send-btn" id="sendButton" disabled>Enviar</button>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div id="emojiPanel" class="emoji-panel" style="display: none;">
-        <button>😊</button><button>😂</button><button>❤️</button><button>👍</button><button>😢</button><button>🎉</button>
-        <button>✨</button><button>🌟</button><button>💕</button><button>🐶</button><button>🐱</button><button>🍕</button>
-        <button>🎨</button><button>📚</button><button>🏃</button><button>🎵</button><button>💤</button><button>🌈</button>
+
+    <!-- Panel de emojis - Organizado verticalmente por categorías -->
+    <!-- Panel de emojis - Organizado verticalmente por categorías -->
+    <div class="emoji-panel" id="emojiPanel">
+        <!-- Emojis divertidos -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">😊 Divertidos</div>
+            <div class="emoji-grid">
+                <button>😊</button><button>😂</button><button>🤣</button><button>😍</button><button>😘</button><button>🥰</button>
+                <button>😎</button><button>🤪</button><button>🥳</button><button>😇</button><button>🤗</button><button>😁</button>
+                <button>😆</button><button>😝</button><button>🤓</button><button>😺</button><button>😸</button><button>😻</button>
+            </div>
+        </div>
+
+        <!-- Emojis de amor -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">❤️ Amor y Amistad</div>
+            <div class="emoji-grid">
+                <button>❤️</button><button>🧡</button><button>💛</button><button>💚</button><button>💙</button><button>💜</button>
+                <button>🖤</button><button>💕</button><button>💞</button><button>💓</button><button>💗</button><button>💖</button>
+                <button>💘</button><button>💝</button><button>💟</button><button>🥰</button><button>😍</button><button>😘</button>
+            </div>
+        </div>
+
+        <!-- Emojis de animales -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">🐶 Animales</div>
+            <div class="emoji-grid">
+                <button>🐶</button><button>🐱</button><button>🐭</button><button>🐹</button><button>🐰</button><button>🦊</button>
+                <button>🐻</button><button>🐼</button><button>🐨</button><button>🐯</button><button>🦁</button><button>🐮</button>
+                <button>🐷</button><button>🐸</button><button>🐒</button><button>🐔</button><button>🐧</button><button>🐦</button>
+                <button>🐴</button><button>🦄</button><button>🐌</button><button>🐝</button><button>🐞</button><button>🦋</button>
+            </div>
+        </div>
+
+        <!-- Emojis de comida -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">🍕 Comida</div>
+            <div class="emoji-grid">
+                <button>🍎</button><button>🍕</button><button>🍔</button><button>🍟</button><button>🌭</button><button>🍦</button>
+                <button>🍩</button><button>🍪</button><button>🎂</button><button>🍰</button><button>🍫</button><button>🍬</button>
+                <button>🍭</button><button>🍮</button><button>🍯</button><button>☕</button><button>🥤</button><button>🍺</button>
+            </div>
+        </div>
+
+        <!-- Emojis de actividades -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">🎨 Actividades</div>
+            <div class="emoji-grid">
+                <button>⚽</button><button>🏀</button><button>🎮</button><button>🎲</button><button>🎯</button><button>🎨</button>
+                <button>📚</button><button>🎵</button><button>🎸</button><button>🎹</button><button>🎤</button><button>🎭</button>
+                <button>🎪</button><button>🚴</button><button>🏊</button><button>🏃</button><button>💃</button><button>🕺</button>
+            </div>
+        </div>
+
+        <!-- Emojis de clima -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">☀️ Clima y Naturaleza</div>
+            <div class="emoji-grid">
+                <button>☀️</button><button>⛅</button><button>☁️</button><button>🌧️</button><button>⛈️</button><button>❄️</button>
+                <button>🌈</button><button>⭐</button><button>🌟</button><button>✨</button><button>⚡</button><button>💨</button>
+                <button>🌺</button><button>🌸</button><button>🌹</button><button>🌻</button><button>🌿</button><button>🍂</button>
+            </div>
+        </div>
+
+        <!-- Emojis de objetos -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">🎁 Objetos</div>
+            <div class="emoji-grid">
+                <button>🎁</button><button>🎈</button><button>🎉</button><button>🎊</button><button>💎</button><button>🔮</button>
+                <button>📱</button><button>💻</button><button>⌚</button><button>📷</button><button>🔐</button><button>💡</button>
+                <button>💰</button><button>🔑</button><button>🕯️</button><button>🧸</button><button>🎀</button><button>🏆</button>
+            </div>
+        </div>
+
+        <!-- Emojis de gestos -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">✋ Gestos y Manos</div>
+            <div class="emoji-grid">
+                <button>👍</button><button>👎</button><button>👌</button><button>✌️</button><button>🤞</button><button>🤟</button>
+                <button>🤘</button><button>👋</button><button>🤙</button><button>👏</button><button>🙌</button><button>💪</button>
+                <button>🖐️</button><button>✋</button><button>🤚</button><button>👊</button><button>✊</button><button>🤛</button>
+                <button>👉</button><button>👈</button><button>👆</button><button>👇</button><button>🙏</button><button>🤝</button>
+            </div>
+        </div>
+
+        <!-- Emojis de caritas y emociones -->
+        <div class="emoji-category">
+            <div class="emoji-category-title">😭 Emociones</div>
+            <div class="emoji-grid">
+                <button>😀</button><button>😃</button><button>😄</button><button>😁</button><button>😆</button><button>😅</button>
+                <button>😂</button><button>🤣</button><button>😊</button><button>😇</button><button>😍</button><button>🥰</button>
+                <button>😘</button><button>😗</button><button>😙</button><button>😚</button><button>🙂</button><button>🤗</button>
+                <button>🤩</button><button>🤔</button><button>🤨</button><button>😐</button><button>😑</button><button>😶</button>
+                <button>😏</button><button>😒</button><button>🙄</button><button>😬</button><button>🤥</button><button>😌</button>
+                <button>😔</button><button>😪</button><button>🤤</button><button>😴</button><button>😷</button><button>🤒</button>
+                <button>🤕</button><button>🤢</button><button>🤮</button><button>🤧</button><button>🥵</button><button>🥶</button>
+                <button>🥴</button><button>😵</button><button>🤯</button><button>🤠</button><button>🥳</button><button>😎</button>
+                <button>🤓</button><button>🧐</button><button>😕</button><button>😟</button><button>🙁</button><button>☹️</button>
+                <button>😮</button><button>😯</button><button>😲</button><button>😳</button><button>🥺</button><button>😦</button>
+                <button>😧</button><button>😨</button><button>😰</button><button>😥</button><button>😢</button><button>😭</button>
+                <button>😱</button><button>😖</button><button>😣</button><button>😞</button><button>😓</button><button>😩</button>
+                <button>😫</button><button>🥱</button><button>😤</button><button>😡</button><button>😠</button><button>🤬</button>
+                <button>💀</button><button>👻</button><button>🎃</button><button>🤖</button><button>👽</button><button>💩</button>
+            </div>
+        </div>
     </div>
-    
-    <div class="status-message" id="statusMessage">Inicializando...</div>
+
+    <!-- Modal de registro -->
+    <div class="register-modal" id="registerModal">
+        <div class="register-card">
+            <h2>💬 Chat Familiar</h2>
+            <p>✨ ¡Lleno de emojis divertidos para ti! ✨</p>
+            <input type="text" id="nombreInput" placeholder="Tu nombre" autocomplete="off" maxlength="20">
+            <button id="registrarBtn">🎉 Unirse al chat</button>
+            <div id="errorMsg" class="error-message"></div>
+        </div>
+    </div>
 
     <script>
-        // Configuración
-        const VPS_IP = '72.61.50.227'; // Cambia por la IP de tu VPS
+        // Configuración - CAMBIA ESTO por la IP de tu VPS
+        const VPS_IP = '72.61.50.227';
         const WS_PORT = 8123;
         
         // Estado global
         let ws = null;
         let miNombre = null;
         let registrado = false;
-        let reconnectAttempts = 0;
-        let nombreEnviado = false;
+        let sidebarOpen = false;
         
         // DOM elements
-        const messagesDiv = document.getElementById('messages');
+        const messagesContainer = document.getElementById('messagesContainer');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
         const statusDiv = document.getElementById('connectionStatus');
         const usersListDiv = document.getElementById('usersList');
         const myAvatar = document.getElementById('myAvatar');
         const myName = document.getElementById('myName');
-        const emojiBtn = document.getElementById('emojiBtn');
-        const emojiPanel = document.getElementById('emojiPanel');
+        const myStatus = document.getElementById('myStatus');
         const registerModal = document.getElementById('registerModal');
         const nombreInput = document.getElementById('nombreInput');
         const registrarBtn = document.getElementById('registrarBtn');
         const errorMsg = document.getElementById('errorMsg');
-        const statusMessage = document.getElementById('statusMessage');
+        const emojiBtn = document.getElementById('emojiBtn');
+        const emojiPanel = document.getElementById('emojiPanel');
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const backButton = document.getElementById('backButton');
         
-        function updateStatus(msg, isError = false) {
-            statusMessage.textContent = msg;
-            statusMessage.style.background = isError ? '#f56565' : '#2d3748';
-            console.log(`[STATUS] ${msg}`);
-            setTimeout(() => {
-                if (statusMessage.textContent === msg) {
-                    statusMessage.textContent = 'Chat listo';
-                    statusMessage.style.background = '#2d3748';
-                }
-            }, 3000);
-        }
-        
-        // Conectar WebSocket (solo UNA vez)
-        function connect() {
-            if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-                console.log('WebSocket ya está conectado o conectándose');
-                return;
-            }
-            
-            const wsUrl = `ws://${VPS_IP}:${WS_PORT}`;
-            updateStatus(`Conectando a ${wsUrl}...`);
-            ws = new WebSocket(wsUrl);
-            
-            ws.onopen = () => {
-                console.log('✅ WebSocket conectado');
-                updateStatus('✅ Conectado al servidor');
-                statusDiv.textContent = '✅ Conectado';
+        function updateStatus(message, isConnected) {
+            if (isConnected) {
                 statusDiv.className = 'connection-status connected';
-                reconnectAttempts = 0;
-                
-                // Mostrar modal si no estamos registrados
-                if (!registrado && !miNombre) {
-                    console.log('Mostrando modal de registro');
-                    registerModal.style.display = 'flex';
-                    updateStatus('Por favor, ingresa tu nombre');
-                } else if (miNombre && !registrado && !nombreEnviado) {
-                    console.log(`Reenviando registro para: ${miNombre}`);
-                    enviarRegistro();
-                }
-            };
-            
-            ws.onmessage = (event) => {
-                console.log(`📨 Mensaje recibido: ${event.data.substring(0, 100)}`);
-                try {
-                    const data = JSON.parse(event.data);
-                    procesarMensaje(data);
-                } catch (error) {
-                    console.error('Error parsing mensaje:', error);
-                }
-            };
-            
-            ws.onerror = (error) => {
-                console.error('❌ Error de WebSocket:', error);
-                updateStatus('Error de conexión', true);
-                statusDiv.textContent = '❌ Error';
-                statusDiv.className = 'connection-status disconnected';
-            };
-            
-            ws.onclose = () => {
-                console.log('🔌 WebSocket cerrado');
-                updateStatus('Desconectado, reconectando...', true);
-                statusDiv.textContent = '🔌 Desconectado';
-                statusDiv.className = 'connection-status disconnected';
-                registrado = false;
-                messageInput.disabled = true;
-                sendButton.disabled = true;
-                
-                // Intentar reconectar después de 3 segundos
-                setTimeout(() => {
-                    if (!ws || ws.readyState === WebSocket.CLOSED) {
-                        console.log('Intentando reconectar...');
-                        connect();
-                    }
-                }, 3000);
-            };
-        }
-        
-        function enviarRegistro() {
-            if (!miNombre) {
-                console.error('No hay nombre para registrar');
-                return;
-            }
-            
-            if (ws && ws.readyState === WebSocket.OPEN && !registrado && !nombreEnviado) {
-                nombreEnviado = true;
-                const registroMsg = {
-                    tipo: 'registro',
-                    nombre: miNombre,
-                    tipo_cliente: 'web'
-                };
-                console.log(`📤 Enviando registro: ${JSON.stringify(registroMsg)}`);
-                updateStatus(`Registrando a ${miNombre}...`);
-                ws.send(JSON.stringify(registroMsg));
+                statusDiv.innerHTML = '<span class="status-dot"></span><span>Conectado</span>';
+                myStatus.textContent = 'Conectado';
             } else {
-                console.log(`No se puede registrar: ws=${!!ws}, readyState=${ws?.readyState}, registrado=${registrado}, nombreEnviado=${nombreEnviado}`);
+                statusDiv.className = 'connection-status disconnected';
+                statusDiv.innerHTML = '<span class="status-dot"></span><span>Desconectado</span>';
+                myStatus.textContent = 'Desconectado';
             }
         }
         
-        function procesarMensaje(data) {
-            switch(data.tipo) {
-                // En la función procesarMensaje, modifica el case 'sistema':
-            case 'sistema':
-                console.log(`💬 Sistema: ${data.mensaje}`);
-                mostrarMensajeSistema(data.mensaje);
-                
-                if (data.mensaje && (data.mensaje.includes('Bienvenid') || data.mensaje.includes('vuelta'))) {
-                    console.log('✅ Registro exitoso!');
-                    registrado = true;
-                    nombreEnviado = false;
-                    registerModal.style.display = 'none';
-                    messageInput.disabled = false;
-                    sendButton.disabled = false;
-                    messageInput.focus();
-                    updateStatus(`✅ ${data.mensaje}`);
-                    
-                    if (data.usuario) {
-                        const miColor = data.usuario.color;
-                        myAvatar.textContent = miNombre.charAt(0).toUpperCase();
-                        myAvatar.style.backgroundColor = miColor;
-                        myName.textContent = miNombre;
-                        
-                        if (!data.usuario.esNuevo) {
-                            mostrarMensajeSistema(`💫 ¡Hola de nuevo ${miNombre}! Tus mensajes anteriores están aquí.`);
-                        }
-                    }
-                }
-                break;
-                    
-                case 'mensaje':
-                    mostrarMensaje(data.de, data.texto, data.timestamp, data.color);
-                    break;
-                    
-                case 'historial':
-                    console.log(`📜 Historial: ${data.mensajes?.length || 0} mensajes`);
-                    mostrarHistorial(data.mensajes);
-                    break;
-                    
-                case 'usuarios':
-                    console.log(`👥 ${data.lista?.length || 0} usuarios activos`);
-                    actualizarListaUsuarios(data.lista);
-                    break;
-                    
-                case 'error':
-                    console.log(`⚠️ Error: ${data.mensaje}`);
-                    mostrarMensajeSistema(`⚠️ Error: ${data.mensaje}`);
-                    errorMsg.textContent = data.mensaje;
-                    errorMsg.style.display = 'block';
-                    nombreEnviado = false;
-                    setTimeout(() => {
-                        errorMsg.style.display = 'none';
-                    }, 3000);
-                    break;
-            }
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            sidebar.classList.toggle('open', sidebarOpen);
+            sidebarOverlay.classList.toggle('open', sidebarOpen);
         }
         
-        function mostrarMensajeSistema(texto) {
+        function closeSidebar() {
+            sidebarOpen = false;
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+        
+        function addMessage(text, type) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'message system';
-            messageDiv.innerHTML = `<div class="message-bubble">${texto}</div>`;
-            messagesDiv.appendChild(messageDiv);
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `<div class="message-bubble">${text}</div>`;
+            messagesContainer.appendChild(messageDiv);
             scrollToBottom();
         }
         
-        function mostrarMensaje(nombre, texto, timestamp, color = '#667eea') {
+        function addUserMessage(nombre, texto, timestamp, color) {
             const esMiMensaje = nombre === miNombre;
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${esMiMensaje ? 'sent' : 'received'}`;
@@ -689,43 +983,140 @@
                 </div>
             `;
             
-            messagesDiv.appendChild(messageDiv);
+            messagesContainer.appendChild(messageDiv);
             scrollToBottom();
+            
+            if (!document.hasFocus() && !esMiMensaje) {
+                const originalTitle = document.title;
+                document.title = `🔔 ${nombre}: ${texto.substring(0, 30)}`;
+                setTimeout(() => {
+                    document.title = originalTitle;
+                }, 3000);
+            }
         }
         
-        function mostrarHistorial(mensajes) {
-            if (mensajes && mensajes.length > 0) {
-                messagesDiv.innerHTML = '<div class="message system"><div class="message-bubble">📜 Mensajes recientes</div></div>';
-                mensajes.forEach(msg => {
-                    mostrarMensaje(msg.de, msg.texto, msg.timestamp, msg.color_asignado);
-                });
-                mostrarMensajeSistema('💬 ¡Chat iniciado!');
-            } else {
-                messagesDiv.innerHTML = '<div class="message system"><div class="message-bubble">💬 ¡Nuevo chat familiar! Envía tu primer mensaje ✨</div></div>';
+        function scrollToBottom() {
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 50);
+        }
+        
+        function connect() {
+            const wsUrl = `ws://${VPS_IP}:${WS_PORT}`;
+            console.log('Conectando a:', wsUrl);
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('✅ Conectado al servidor');
+                updateStatus('Conectado', true);
+                
+                if (!registrado && miNombre) {
+                    registrarUsuario();
+                }
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                procesarMensaje(data);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('Error:', error);
+                updateStatus('Error', false);
+            };
+            
+            ws.onclose = () => {
+                console.log('Desconectado');
+                updateStatus('Desconectado', false);
+                registrado = false;
+                messageInput.disabled = true;
+                sendButton.disabled = true;
+                
+                setTimeout(() => {
+                    if (!registrado) {
+                        connect();
+                    }
+                }, 3000);
+            };
+        }
+        
+        function registrarUsuario() {
+            if (ws && ws.readyState === WebSocket.OPEN && miNombre && !registrado) {
+                ws.send(JSON.stringify({
+                    tipo: 'registro',
+                    nombre: miNombre,
+                    tipo_cliente: 'web'
+                }));
             }
-            scrollToBottom();
+        }
+        
+        function procesarMensaje(data) {
+            switch(data.tipo) {
+                case 'sistema':
+                    addMessage(data.mensaje, 'system');
+                    if (data.mensaje.includes('Bienvenid')) {
+                        registrado = true;
+                        registerModal.style.display = 'none';
+                        messageInput.disabled = false;
+                        sendButton.disabled = false;
+                        messageInput.focus();
+                        
+                        if (data.usuario) {
+                            myAvatar.textContent = miNombre.charAt(0).toUpperCase();
+                            myAvatar.style.backgroundColor = data.usuario.color;
+                            myName.textContent = miNombre;
+                        }
+                    }
+                    break;
+                    
+                case 'mensaje':
+                    addUserMessage(data.de, data.texto, data.timestamp, data.color);
+                    break;
+                    
+                case 'historial':
+                    if (data.mensajes && data.mensajes.length > 0) {
+                        messagesContainer.innerHTML = '';
+                        data.mensajes.forEach(msg => {
+                            addUserMessage(msg.de, msg.texto, msg.timestamp, msg.color_asignado);
+                        });
+                        addMessage('💬 ¡Chat iniciado! ✨', 'system');
+                    } else {
+                        addMessage('💬 ¡Nuevo chat familiar! Envía tu primer mensaje 🎉', 'system');
+                    }
+                    scrollToBottom();
+                    break;
+                    
+                case 'usuarios':
+                    actualizarListaUsuarios(data.lista);
+                    break;
+                    
+                case 'error':
+                    addMessage(`⚠️ Error: ${data.mensaje}`, 'system');
+                    errorMsg.textContent = data.mensaje;
+                    errorMsg.style.display = 'block';
+                    setTimeout(() => {
+                        errorMsg.style.display = 'none';
+                    }, 3000);
+                    break;
+            }
         }
         
         function actualizarListaUsuarios(usuarios) {
             if (!usuarios || usuarios.length === 0) {
-                usersListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">No hay usuarios activos</div>';
+                usersListDiv.innerHTML = '<div class="loading">No hay usuarios activos</div>';
                 return;
-            }
-            
-            const yo = usuarios.find(u => u.nombre === miNombre);
-            if (yo) {
-                myAvatar.textContent = miNombre.charAt(0).toUpperCase();
-                myAvatar.style.backgroundColor = yo.color_asignado;
-                myName.textContent = miNombre;
             }
             
             usersListDiv.innerHTML = usuarios.map(u => `
                 <div class="user-item">
-                    <div class="user-avatar" style="background: ${u.color_asignado}; width: 30px; height: 30px; font-size: 0.8em;">
+                    <div class="user-item-avatar" style="background: ${u.color_asignado}">
                         ${u.nombre.charAt(0).toUpperCase()}
                     </div>
-                    <div class="user-name" style="flex: 1;">${u.nombre}${u.nombre === miNombre ? ' (tú)' : ''}</div>
-                    <div class="user-status" title="${u.tipo_cliente === 'flutter' ? 'App móvil' : 'Web'}"></div>
+                    <div class="user-item-info">
+                        <div class="user-item-name">${u.nombre}${u.nombre === miNombre ? ' (tú)' : ''}</div>
+                        <div class="user-item-device">${u.tipo_cliente === 'flutter' ? '📱 Móvil' : '💻 Web'}</div>
+                    </div>
+                    <div class="user-status-indicator"></div>
                 </div>
             `).join('');
         }
@@ -733,26 +1124,16 @@
         function enviarMensaje() {
             const texto = messageInput.value.trim();
             if (texto && ws && ws.readyState === WebSocket.OPEN && registrado) {
-                console.log(`📤 Enviando mensaje: "${texto.substring(0, 30)}"`);
                 ws.send(JSON.stringify({
                     tipo: 'mensaje',
                     texto: texto
                 }));
                 messageInput.value = '';
                 messageInput.focus();
-            } else if (!registrado) {
-                updateStatus('Esperando registro...', true);
-                mostrarMensajeSistema('⏳ Esperando registro...');
             }
         }
         
-        function scrollToBottom() {
-            setTimeout(() => {
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, 50);
-        }
-        
-        // Eventos del modal de registro
+        // Event listeners
         registrarBtn.addEventListener('click', () => {
             const nombre = nombreInput.value.trim();
             if (nombre === '') {
@@ -768,49 +1149,13 @@
             }
             
             miNombre = nombre;
-            nombreEnviado = false;
-            console.log(`📝 Nombre ingresado: ${miNombre}`);
-            registerModal.style.display = 'none';
-            
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                enviarRegistro();
-            } else {
-                updateStatus('Conectando al servidor...');
-                connect();
-                // Esperar a que se conecte para enviar el registro
-                const checkConnection = setInterval(() => {
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        clearInterval(checkConnection);
-                        enviarRegistro();
-                    }
-                }, 100);
-            }
+            errorMsg.style.display = 'none';
+            registrarUsuario();
         });
         
         nombreInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 registrarBtn.click();
-            }
-        });
-        
-        // Emoji panel
-        emojiBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const isVisible = emojiPanel.style.display === 'flex';
-            emojiPanel.style.display = isVisible ? 'none' : 'flex';
-        });
-        
-        document.querySelectorAll('.emoji-panel button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                messageInput.value += btn.textContent;
-                messageInput.focus();
-                emojiPanel.style.display = 'none';
-            });
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (!emojiBtn.contains(e.target) && !emojiPanel.contains(e.target)) {
-                emojiPanel.style.display = 'none';
             }
         });
         
@@ -822,16 +1167,41 @@
             }
         });
         
-        // Ping cada 30 segundos para mantener la conexión viva
+        emojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isVisible = emojiPanel.style.display === 'flex';
+            emojiPanel.style.display = isVisible ? 'none' : 'flex';
+        });
+        
+        document.querySelectorAll('.emoji-panel button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                messageInput.value += btn.textContent;
+                messageInput.focus();
+                messageInput.dispatchEvent(new Event('input'));
+            });
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!emojiBtn.contains(e.target) && !emojiPanel.contains(e.target)) {
+                emojiPanel.style.display = 'none';
+            }
+            if (!sidebar.contains(e.target) && !menuButton.contains(e.target) && sidebarOpen) {
+                closeSidebar();
+            }
+        });
+        
+        menuButton.addEventListener('click', toggleSidebar);
+        backButton.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+        
+        // Ping cada 30 segundos
         setInterval(() => {
             if (ws && ws.readyState === WebSocket.OPEN && registrado) {
                 ws.send(JSON.stringify({ tipo: 'ping' }));
-                console.log('🏓 Ping enviado');
             }
         }, 30000);
         
         // Iniciar conexión
-        console.log('🚀 Iniciando cliente...');
         connect();
     </script>
 </body>
