@@ -1003,6 +1003,7 @@
         
         function connect() {
             const wsUrl = `ws://${VPS_IP}:${WS_PORT}`;
+            // const wsUrl = `wss://${VPS_IP}/ws`;
             console.log('Conectando a:', wsUrl);
             ws = new WebSocket(wsUrl);
             
