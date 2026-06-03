@@ -913,9 +913,7 @@
         let WS_PROTOCOL;
 
         // Detectar si estamos en local o en producción
-        const isLocal = window.location.hostname === 'localhost' || 
-                        window.location.hostname === '127.0.0.1' ||
-                        window.location.hostname === '';
+        const isLocal = false;
 
         if (isLocal) {
             // Configuración para pruebas LOCALES
@@ -1213,6 +1211,84 @@
         backButton.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
         
+        // Variable para intentos de conexión
+        let connectionAttempts = 0;
+        
+        // Función para mostrar el botón de certificado
+        function showCertButton() {
+            const btn = document.getElementById('acceptCertBtn');
+            if (btn) {
+                btn.style.display = 'block';
+                console.log('🔐 Botón de certificado mostrado');
+                btn.onclick = () => {
+                    window.open(`https://${VPS_IP}:${WS_PORT}/health`, '_blank');
+                    setTimeout(() => {
+                        btn.style.display = 'none';
+                        connectionAttempts = 0;
+                        if (ws) ws.close();
+                        connect(); // Reintentar conexión
+                    }, 3000);
+                };
+            } else {
+                console.log('❌ Botón no encontrado en el DOM');
+            }
+        }
+        
+        // Función connect modificada
+        function connect() {
+            const wsUrl = `${WS_PROTOCOL}://${VPS_IP}:${WS_PORT}`;
+            console.log('Conectando a:', wsUrl);
+            ws = new WebSocket(wsUrl);
+            
+            ws.onopen = () => {
+                console.log('✅ Conectado al servidor');
+                updateStatus('Conectado', true);
+                connectionAttempts = 0; // Resetear intentos
+                
+                // Ocultar botón si estaba visible
+                const btn = document.getElementById('acceptCertBtn');
+                if (btn) btn.style.display = 'none';
+                
+                if (!registrado && miNombre) {
+                    registrarUsuario();
+                }
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                procesarMensaje(data);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('Error:', error);
+                updateStatus('Error', false);
+                connectionAttempts++;
+                console.log(`Intento de conexión ${connectionAttempts}`);
+                
+                // Mostrar botón después del primer error
+                if (connectionAttempts >= 1) {
+                    showCertButton();
+                }
+            };
+            
+            ws.onclose = () => {
+                console.log('Desconectado');
+                updateStatus('Desconectado', false);
+                registrado = false;
+                messageInput.disabled = true;
+                sendButton.disabled = true;
+                
+                // Solo reconectar si no hemos mostrado el botón aún
+                if (connectionAttempts < 2 && !document.getElementById('acceptCertBtn')?.style.display === 'block') {
+                    setTimeout(() => {
+                        if (!registrado) {
+                            connect();
+                        }
+                    }, 3000);
+                }
+            };
+        }
+        
         // Ping cada 30 segundos
         setInterval(() => {
             if (ws && ws.readyState === WebSocket.OPEN && registrado) {
@@ -1220,8 +1296,27 @@
             }
         }, 30000);
         
+        // Mostrar el botón automáticamente si es GitHub Pages (por si acaso)
+        if (window.location.hostname.includes('github.io')) {
+            setTimeout(() => {
+                // Si después de 3 segundos no está conectado, mostrar botón
+                if (!ws || ws.readyState !== WebSocket.OPEN) {
+                    showCertButton();
+                }
+            }, 3000);
+        }
+        
         // Iniciar conexión
         connect();
     </script>
+
+
+    <!-- Agrega esto justo antes del </body> -->
+    <button id="acceptCertBtn" style="position:fixed; bottom:20px; right:20px; 
+        background:#667eea; color:white; border:none; border-radius:50px;
+        padding:8px 16px; font-size:12px; cursor:pointer; z-index:10000;
+        box-shadow:0 2px 8px rgba(0,0,0,0.2); display:none;">
+        🔐 Aceptar Certificado
+    </button>
 </body>
 </html>
