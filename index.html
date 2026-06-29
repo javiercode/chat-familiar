@@ -740,6 +740,81 @@
                 margin-bottom: 10px;
             }
         }
+
+        /* Panel de Notificaciones */
+        .notification-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .notification-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .notification-card-text {
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+
+        .notification-card-text.error {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+
+        .notification-card-text.success {
+            color: #38a169;
+            font-weight: 500;
+        }
+
+        .notification-btn {
+            width: 100%;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notification-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+        }
+
+        .notification-btn:active {
+            transform: translateY(0);
+        }
+
+        .notification-badge-unsupported {
+            background: #feb2b2;
+            color: #9b2c2c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .notification-badge-compatible {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -764,6 +839,20 @@
                     <div class="user-status-text" id="myStatus">Esperando conexión</div>
                 </div>
                 <div class="users-section">
+                    <!-- Tarjeta de Notificaciones -->
+                    <div class="notification-card" id="notificationCard">
+                        <div class="notification-title-container">
+                            <span class="section-title" style="margin-bottom: 0;">🔔 NOTIFICACIONES</span>
+                            <span id="compatBadge" class="notification-badge-compatible">Iniciando...</span>
+                        </div>
+                        <p class="notification-card-text" id="notificationStatusText">
+                            Verificando compatibilidad de notificaciones...
+                        </p>
+                        <button class="notification-btn" id="enableNotificationsBtn" style="display: none;">
+                            Habilitar Notificaciones
+                        </button>
+                    </div>
+
                     <div class="section-title">👥 PARTICIPANTES ACTIVOS</div>
                     <div class="users-list" id="usersList">
                         <div class="loading">Cargando usuarios...</div>
@@ -1000,7 +1089,7 @@
             scrollToBottom();
         }
         
-        function addUserMessage(nombre, texto, timestamp, color) {
+        function addUserMessage(nombre, texto, timestamp, color, esNuevo = false) {
             const esMiMensaje = nombre === miNombre;
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${esMiMensaje ? 'sent' : 'received'}`;
@@ -1018,12 +1107,17 @@
             messagesContainer.appendChild(messageDiv);
             scrollToBottom();
             
-            if (!document.hasFocus() && !esMiMensaje) {
-                const originalTitle = document.title;
-                document.title = `🔔 ${nombre}: ${texto.substring(0, 30)}`;
-                setTimeout(() => {
-                    document.title = originalTitle;
-                }, 3000);
+            if (esNuevo && !esMiMensaje) {
+                // Mostrar notificación push en el navegador
+                mostrarNotificacion(nombre, texto);
+                
+                if (!document.hasFocus()) {
+                    const originalTitle = document.title;
+                    document.title = `🔔 ${nombre}: ${texto.substring(0, 30)}`;
+                    setTimeout(() => {
+                        document.title = originalTitle;
+                    }, 3000);
+                }
             }
         }
         
@@ -1032,44 +1126,129 @@
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }, 50);
         }
+
+        // --- SISTEMA DE NOTIFICACIONES ---
+        function checkBrowserNotificationSupport() {
+            if (!("Notification" in window)) {
+                return {
+                    supported: false,
+                    reason: "Este navegador no soporta la API de Notificaciones de escritorio."
+                };
+            }
+            
+            const ua = navigator.userAgent;
+            let browser = "Desconocido";
+            let version = 0;
+            let match;
+            
+            if ((match = ua.match(/Edg\/(\d+)/))) {
+                browser = "Edge";
+                version = parseInt(match[1], 10);
+            } else if ((match = ua.match(/Chrome\/(\d+)/))) {
+                browser = "Chrome";
+                version = parseInt(match[1], 10);
+            } else if ((match = ua.match(/Firefox\/(\d+)/))) {
+                browser = "Firefox";
+                version = parseInt(match[1], 10);
+            } else if ((match = ua.match(/Version\/(\d+).*Safari/))) {
+                browser = "Safari";
+                version = parseInt(match[1], 10);
+            } else if ((match = ua.match(/OPR\/(\d+)/))) {
+                browser = "Opera";
+                version = parseInt(match[1], 10);
+            }
+            
+            const minVersions = {
+                "Chrome": 22,
+                "Firefox": 22,
+                "Safari": 6,
+                "Edge": 14,
+                "Opera": 25,
+                "Desconocido": 0
+            };
+            
+            const minVer = minVersions[browser];
+            if (browser !== "Desconocido" && version < minVer) {
+                return {
+                    supported: false,
+                    browser: browser,
+                    version: version,
+                    reason: `Tu versión de ${browser} (${version}) es antigua. Requiere v${minVer}+.`
+                };
+            }
+            
+            return {
+                supported: true,
+                browser: browser,
+                version: version,
+                reason: "Compatible"
+            };
+        }
         
-        function connect() {
-            const wsUrl = `${WS_PROTOCOL}://${VPS_IP}:${WS_PORT}`;
-            console.log('Conectando a:', wsUrl);
-            ws = new WebSocket(wsUrl);
+        function inicializarNotificaciones() {
+            const support = checkBrowserNotificationSupport();
+            const cardText = document.getElementById('notificationStatusText');
+            const compatBadge = document.getElementById('compatBadge');
+            const enableBtn = document.getElementById('enableNotificationsBtn');
             
-            ws.onopen = () => {
-                console.log('✅ Conectado al servidor');
-                updateStatus('Conectado', true);
-                
-                if (!registrado && miNombre) {
-                    registrarUsuario();
+            if (!support.supported) {
+                compatBadge.className = 'notification-badge-unsupported';
+                compatBadge.textContent = 'Incompatible';
+                cardText.className = 'notification-card-text error';
+                cardText.textContent = support.reason;
+                enableBtn.style.display = 'none';
+                return;
+            }
+            
+            compatBadge.className = 'notification-badge-compatible';
+            compatBadge.textContent = support.browser !== 'Desconocido' ? `${support.browser} v${support.version}` : 'Compatible';
+            
+            actualizarUIInformativaPermiso();
+        }
+        
+        function actualizarUIInformativaPermiso() {
+            const cardText = document.getElementById('notificationStatusText');
+            const enableBtn = document.getElementById('enableNotificationsBtn');
+            
+            if (Notification.permission === 'granted') {
+                cardText.className = 'notification-card-text success';
+                cardText.textContent = '¡Notificaciones activadas y listas! Recibirás avisos en tiempo real al llegar nuevos mensajes.';
+                enableBtn.style.display = 'none';
+            } else if (Notification.permission === 'denied') {
+                cardText.className = 'notification-card-text error';
+                cardText.textContent = 'Las notificaciones están bloqueadas. Habilítalas en los ajustes de candado/seguridad de la barra de direcciones de tu navegador.';
+                enableBtn.style.display = 'none';
+            } else {
+                cardText.className = 'notification-card-text';
+                cardText.textContent = 'Permite recibir notificaciones para estar al tanto de los nuevos mensajes en segundo plano.';
+                enableBtn.style.display = 'block';
+            }
+        }
+        
+        function mostrarNotificacion(nombre, texto) {
+            if (Notification.permission !== "granted") return;
+            
+            const titulo = `💬 ${nombre}`;
+            const opciones = {
+                body: texto,
+                tag: 'chat-familiar',
+                renotify: true
+            };
+            
+            try {
+                const notification = new Notification(titulo, opciones);
+                notification.onclick = () => {
+                    window.focus();
+                    notification.close();
+                };
+            } catch (err) {
+                console.warn("La creación directa de la notificación falló, intentando fallback con Service Worker...", err);
+                if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(titulo, opciones);
+                    });
                 }
-            };
-            
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                procesarMensaje(data);
-            };
-            
-            ws.onerror = (error) => {
-                console.error('Error:', error);
-                updateStatus('Error', false);
-            };
-            
-            ws.onclose = () => {
-                console.log('Desconectado');
-                updateStatus('Desconectado', false);
-                registrado = false;
-                messageInput.disabled = true;
-                sendButton.disabled = true;
-                
-                setTimeout(() => {
-                    if (!registrado) {
-                        connect();
-                    }
-                }, 3000);
-            };
+            }
         }
         
         function registrarUsuario() {
@@ -1102,7 +1281,7 @@
                     break;
                     
                 case 'mensaje':
-                    addUserMessage(data.de, data.texto, data.timestamp, data.color);
+                    addUserMessage(data.de, data.texto, data.timestamp, data.color, true);
                     break;
                     
                 case 'historial':
@@ -1225,6 +1404,29 @@
         menuButton.addEventListener('click', toggleSidebar);
         backButton.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Click en habilitar notificaciones
+        const enableNotificationsBtn = document.getElementById('enableNotificationsBtn');
+        if (enableNotificationsBtn) {
+            enableNotificationsBtn.addEventListener('click', () => {
+                if ("Notification" in window) {
+                    Notification.requestPermission().then(permission => {
+                        actualizarUIInformativaPermiso();
+                        if (permission === 'granted') {
+                            try {
+                                const n = new Notification("💬 Chat Familiar", {
+                                    body: "¡Notificaciones activadas correctamente! 🎉",
+                                    tag: "chat-familiar-test"
+                                });
+                                setTimeout(() => n.close(), 3000);
+                            } catch (e) {
+                                console.warn("La creación directa de la notificación de prueba falló:", e);
+                            }
+                        }
+                    });
+                }
+            });
+        }
         
         // Variable para intentos de conexión
         let connectionAttempts = 0;
@@ -1320,6 +1522,9 @@
                 }
             }, 3000);
         }
+        
+        // Inicializar sistema de notificaciones
+        inicializarNotificaciones();
         
         // Iniciar conexión
         connect();
