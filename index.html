@@ -11,17 +11,24 @@
             box-sizing: border-box;
         }
 
+        html {
+            height: 100%;
+            height: 100dvh;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
+            height: 100%;
+            height: 100dvh;
             overflow: hidden;
             position: relative;
         }
 
         /* Contenedor principal */
         .app-container {
-            height: 100vh;
+            height: 100%;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -32,6 +39,10 @@
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
             padding: 12px 20px;
+            /* Soporte para Safe Area (Notch y barra de estado en dispositivos móviles reales) */
+            padding-top: calc(12px + env(safe-area-inset-top, 0px));
+            padding-left: calc(20px + env(safe-area-inset-left, 0px));
+            padding-right: calc(20px + env(safe-area-inset-right, 0px));
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -688,6 +699,10 @@
         @media (max-width: 480px) {
             .main-header {
                 padding: 10px 16px;
+                /* Soporte Safe Area en móviles pequeños reales */
+                padding-top: calc(10px + env(safe-area-inset-top, 0px));
+                padding-left: calc(16px + env(safe-area-inset-left, 0px));
+                padding-right: calc(16px + env(safe-area-inset-right, 0px));
             }
 
             .logo-text {
@@ -863,13 +878,13 @@
             <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
             <div class="chat-main">
-                <div class="chat-header">
+                <!-- <div class="chat-header">
                     <button class="back-button" id="backButton">←</button>
                     <div class="chat-info">
                         <h4>💬 Conversación General</h4>
                         <p>Todos los participantes</p>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="messages-container" id="messagesContainer">
                     <div class="message system">
@@ -1055,7 +1070,7 @@
         const menuButton = document.getElementById('menuButton');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const backButton = document.getElementById('backButton');
+        //const backButton = document.getElementById('backButton');
         
         function updateStatus(message, isConnected) {
             if (isConnected) {
@@ -1402,7 +1417,7 @@
         });
         
         menuButton.addEventListener('click', toggleSidebar);
-        backButton.addEventListener('click', closeSidebar);
+        //backButton.addEventListener('click', closeSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
 
         // Click en habilitar notificaciones
